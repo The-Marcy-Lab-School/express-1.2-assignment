@@ -18,7 +18,7 @@ describe(testSuiteName, () => {
     scoreCounter.correct(expect); // DO NOT TOUCH
   });
 
-  it('GET /books sees all tasks', async () => {
+  it('GET /books sees all books', async () => {
     const bookTitle1 = 'Wizard of Oz';
     const bookTitle2 = 'The Hobbit';
     await request(app)
@@ -35,12 +35,12 @@ describe(testSuiteName, () => {
     expect(res.body.length).toBe(2);
     expect(res.status).toEqual(200);
 
-    const [task1, task2] = res.body;
+    const [book1, book2] = res.body;
 
-    expect(task1.id).toBeGreaterThan(0);
-    expect(task1.title).toBe(bookTitle1);
-    expect(task2.id).toBeGreaterThan(0);
-    expect(task2.title).toBe(bookTitle2);
+    expect(book1.id).toBeGreaterThan(0);
+    expect(book1.title).toBe(bookTitle1);
+    expect(book2.id).toBeGreaterThan(0);
+    expect(book2.title).toBe(bookTitle2);
 
     scoreCounter.correct(expect); // DO NOT TOUCH
   });
@@ -125,7 +125,7 @@ describe(testSuiteName, () => {
     scoreCounter.correct(expect); // DO NOT TOUCH
   });
 
-  it('PATCH /books/:id returns 404 if task does not exist', async () => {
+  it('PATCH /books/:id returns 404 if book does not exist', async () => {
     const updateRes = await request(app)
       .patch('/books/1234')
       .send({ title: 'Does not matter' });
