@@ -62,15 +62,31 @@ As for `express.json()`, it lets us parse out the `req.body` property. Remember 
 > Order matters when registering routes and middleware! First registered, first hit.
 
 ## server.js: our Model middleware
-This is our custom middleware, all it does is add our `Book` model as a property to `req`.
+
+```js
+app.use((req, res, next) => {
+  req.Book = Book;
+  next();
+});
+```
+
+This is our custom middleware, all it does is add our `Book` model as a property to `req`. (We'll look at what the `Book` model is in a moment!)
 
 ## server.js: DELETE all route
-The only other thing left in `server.js`, besides the export, is a `DELETE` all route. There's a comment that says we only need this for testing, so we can ignore it for the assignment. Maybe we can reference some things in this later like the `.status` and `.send` methods? (hint: do that)
+The only other thing left in `server.js`, besides the export, is a `DELETE` all route. There's a comment that says we only need this for testing, so we can ignore it for the assignment. Maybe we can reference some things in this later like the `.sendStatus` method? (hint: do that)
+
+Next, let's look at `model-book.js`
 
 ## model-book.js
-A "Model" is a class that refers specifically to a real thing, or "entity." So, a class that handles fetches probably wouldn't be called a model, but a class that tracks our book data would definitely be called the `Book` model. In our case, this model is responsible for some helpful methods like creating, reading, updating, and deleting books. ...wait that's CRUD!
+A "Model" is a class that refers specifically to a real thing, or "entity." That is, it "models" a real-world object. 
 
-You may not be super comfortable with [Static class methods](https://www.w3schools.com/js/js_class_static.asp), but all you need to know is that the *class* `Book` has methods on it that *don't* require the `new` keyword to use.
+> So, a class that handles fetches probably wouldn't be called a model, but a class that represents book data would definitely be called the `Book` model. 
+
+In our case, this `Book` model is responsible for some helpful methods like creating, reading, updating, and deleting books. ...wait that's CRUD!
+
+You may not be super comfortable with [static class methods](https://www.w3schools.com/js/js_class_static.asp), but all you need to know is that the *class* `Book` has methods that can be called directly on it. There is no need to make a new instance of `Book` with the `new` keyword to use `static` methods.
+
+`Book` has the `static` methods `Book.list`, `Book.find`, `Book.editTitle`, `Book.delete` and `Book.deleteAll`:
 
 ```js
 const theHobbit = new Book('The Hobbit');
