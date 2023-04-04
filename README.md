@@ -167,7 +167,7 @@ However, what if someone requests a resource that doesn't exist? In that case we
 - **expected response:** A single `Book` object OR the text "Not Found"
 - **status code**: Either `200` or `404`
 
-> HINT: I bet there's a specific method that can *just* send a status Code and auto set the body text.
+> Hint: Remember that the `id` parameter is going to be a string value!
 
 ----------------------------------------------------------------
 
@@ -211,6 +211,8 @@ OK! Now that the `Book.delete()` is fixed, let's make the last route.With `DELET
 - **url:** /books/:id
 - **expected response:** An empty response OR the text "Not Found"
 - **status code**: Either `204` or `404`
+
+> Hint: Remember that the `id` parameter is going to be a string value!
 
 # Bonus:  Fetch to create
 Hungry for more? If all your tests are passing, here's a challenge for you: create a form in `/public/index.html` to create a new book.
