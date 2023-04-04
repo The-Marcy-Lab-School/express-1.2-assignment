@@ -62,15 +62,31 @@ As for `express.json()`, it lets us parse out the `req.body` property. Remember 
 > Order matters when registering routes and middleware! First registered, first hit.
 
 ## server.js: our Model middleware
-This is our custom middleware, all it does is add our `Book` model as a property to `req`.
+
+```js
+app.use((req, res, next) => {
+  req.Book = Book;
+  next();
+});
+```
+
+This is our custom middleware, all it does is add our `Book` model as a property to `req`. (We'll look at what the `Book` model is in a moment!)
 
 ## server.js: DELETE all route
-The only other thing left in `server.js`, besides the export, is a `DELETE` all route. There's a comment that says we only need this for testing, so we can ignore it for the assignment. Maybe we can reference some things in this later like the `.status` and `.send` methods? (hint: do that)
+The only other thing left in `server.js`, besides the export, is a `DELETE` all route. There's a comment that says we only need this for testing, so we can ignore it for the assignment. Maybe we can reference some things in this later like the `.sendStatus` method? (hint: do that)
+
+Next, let's look at `model-book.js`
 
 ## model-book.js
-A "Model" is a class that refers specifically to a real thing, or "entity." So, a class that handles fetches probably wouldn't be called a model, but a class that tracks our book data would definitely be called the `Book` model. In our case, this model is responsible for some helpful methods like creating, reading, updating, and deleting books. ...wait that's CRUD!
+A "Model" is a class that refers specifically to a real thing, or "entity." That is, it "models" a real-world object. 
 
-You may not be super comfortable with [Static class methods](https://www.w3schools.com/js/js_class_static.asp), but all you need to know is that the *class* `Book` has methods on it that *don't* require the `new` keyword to use.
+> So, a class that handles fetches probably wouldn't be called a model, but a class that represents book data would definitely be called the `Book` model. 
+
+In our case, this `Book` model is responsible for some helpful methods like creating, reading, updating, and deleting books. ...wait that's CRUD!
+
+You may not be super comfortable with [static class methods](https://www.w3schools.com/js/js_class_static.asp), but all you need to know is that the *class* `Book` has methods that can be called directly on it. There is no need to make a new instance of `Book` with the `new` keyword to use `static` methods.
+
+`Book` has the `static` methods `Book.list`, `Book.find`, `Book.editTitle`, `Book.delete` and `Book.deleteAll`:
 
 ```js
 const theHobbit = new Book('The Hobbit');
@@ -95,9 +111,6 @@ console.log(Book.#all)
 Also, that funky `#all` means it's a [*private* class property](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields). No one outside can access it, that's why we call `Book.list()` externally, and not just `Book.all`.
 
 OK! Let's run `npm i` and `npm start` in our terminal, get our Postman ready for queries, and start building! You can also do `npm run test:w` to have Jest continuously test your server on save.
-
-### Wait, where did my books go?
-Since we're using in memory storage, our data isn't permanent. As long as our server is running, we have access to same Books data. However, when the server restarts, all that data will be reset. We'll use DBs next week, but for now keep this behavior in mind. It's not a bug, it's simply how things work.
 
 # Question 1: GET /books
 First up, lets create a route that returns a list of all our books. Let's make it a `GET` request because we don't need to *send* a body. If we have no books, then our API should send back an empty array.
@@ -132,6 +145,16 @@ Also, since we're creating a resource, we want a status code of `201`. [Look at 
 - **expected response:** A single `Book` object
 - **status code**: Always `201`
 
+### Use Postman to test your code!
+
+Now that you have set up your server to handle `POST` and `GET` requests, you can start using Postman to test it. Start by sending a few `POST` requests to the `/books` endpoint and then send a `GET` request to the same endpoint.
+
+### Wait, where did my books go?
+
+If you have to restart your server, you'll notice that the data that you may have posted previously isn't there anymore.
+
+Since we're using in memory storage, our data isn't permanent. As long as our server is running, we have access to same Books data. However, when the server restarts, all that data will be reset. We'll use DBs next week, but for now keep this behavior in mind. It's not a bug, it's simply how things work.
+
 ----------------------------------------------------------------
 
 
@@ -151,7 +174,7 @@ However, what if someone requests a resource that doesn't exist? In that case we
 - **expected response:** A single `Book` object OR the text "Not Found"
 - **status code**: Either `200` or `404`
 
-> HINT: I bet there's a specific method that can *just* send a status Code and auto set the body text.
+> Hint: Remember that the `id` parameter is going to be a string value!
 
 ----------------------------------------------------------------
 
@@ -182,7 +205,11 @@ If however we hit a non-existent id, `/books/123123`, we just get a `404` and a 
 Notice that the id is in the route parameter and not the body. With a `PATCH` request, the id isn't usually required (if the API is sticking to conventions).
 
 # 🚨 DEBUG: Fix Book.delete()! 🚨
-Ah, shoot. I just noticed we can't build our `DELETE` route until we fix the underlying `Book.delete` method. Check out the `/tests/debug.spec.js` file to see what's failing. Ideally, we should be able to pass an `id` into `Book.delete()` and *only* that book would be deleted. I'd recommend making a `playground.js` file to mess around with the model.
+Ah, shoot. I just noticed we can't build our `DELETE /books/:id` route until we fix the underlying `Book.delete` method. 
+
+Run `npm test` again and check out the `tests/debug.spec.js` portion of the tests to see what's failing. Take a look at the `tests/debug.spec.js` file to understand how the test is set up. 
+
+Finally, look at `model-books.js` and look into the `delete` method. Compare the expected output of the test to the received output to determine what the `delete` method _should_ be doing, but isn't.
 
 # Question 5: DELETE /books/:id
 OK! Now that the `Book.delete()` is fixed, let's make the last route.With `DELETE` routes, they just send a status code of `204` and an empty body or a `404` and a "Not Found" body.
@@ -191,6 +218,8 @@ OK! Now that the `Book.delete()` is fixed, let's make the last route.With `DELET
 - **url:** /books/:id
 - **expected response:** An empty response OR the text "Not Found"
 - **status code**: Either `204` or `404`
+
+> Hint: Remember that the `id` parameter is going to be a string value!
 
 # Bonus:  Fetch to create
 Hungry for more? If all your tests are passing, here's a challenge for you: create a form in `/public/index.html` to create a new book.
