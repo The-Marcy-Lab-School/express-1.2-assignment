@@ -26,8 +26,8 @@ class Book {
   }
 
   static delete(bookId) {
-    const bookIdx = Book.#all.find(({ id }) => id === bookId);
-    if (bookIdx) return null;
+    const bookIdx = Book.#all.findIndex(({ id }) => id === bookId);
+    if (bookIdx < 0) return null;
 
     Book.#all.splice(bookIdx, 1);
     return true;

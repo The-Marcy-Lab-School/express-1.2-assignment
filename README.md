@@ -1,5 +1,5 @@
 # Express-1.2 Assignment
-Building a CRUD server with in memory storage
+Building a CRUD server with in-memory storage
 
 - [Express-1.2 Assignment](#express-12-assignment)
 - [Overview: How to read what we already have](#overview-how-to-read-what-we-already-have)
@@ -10,12 +10,11 @@ Building a CRUD server with in memory storage
   - [server.js: our Model middleware](#serverjs-our-model-middleware)
   - [server.js: DELETE all route](#serverjs-delete-all-route)
   - [model-book.js](#model-bookjs)
-    - [Wait, where did my books go?](#wait-where-did-my-books-go)
+    - [A final heads up: in-memory data gets reset](#a-final-heads-up-in-memory-data-gets-reset)
 - [Question 1: GET /books](#question-1-get-books)
 - [Question 2: POST /books](#question-2-post-books)
 - [Question 3: GET /books/:id](#question-3-get-booksid)
 - [Question 4: PATCH /books/:id](#question-4-patch-booksid)
-- [🚨 DEBUG: Fix Book.delete()! 🚨](#-debug-fix-bookdelete-)
 - [Question 5: DELETE /books/:id](#question-5-delete-booksid)
 - [Bonus:  Fetch to create](#bonus--fetch-to-create)
 
@@ -94,26 +93,24 @@ console.log(Book.#all)
 
 Also, that funky `#all` means it's a [*private* class property](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields). No one outside can access it, that's why we call `Book.list()` externally, and not just `Book.all`.
 
-OK! Let's run `npm i` and `npm start` in our terminal, get our Postman ready for queries, and start building! You can also do `npm run test:w` to have Jest continuously test your server on save.
+OK! Let's run `npm i` and `npm start` in our terminal, get our Postman ready for queries, and start building! You can also do `npm run test:w` to have Jest continuously test the server on save.
 
-### Wait, where did my books go?
-Since we're using in memory storage, our data isn't permanent. As long as our server is running, we have access to same Books data. However, when the server restarts, all that data will be reset. We'll use DBs next week, but for now keep this behavior in mind. It's not a bug, it's simply how things work.
+### A final heads up: in-memory data gets reset
+Our only source of data storage is our class property, which means it isn't permanent. As long as our server is running, we have access to same Book instances. However, when the server restarts (which nodemon does on every time we edit and save our code), all that data will be reset. We'll use DBs next week, but for now keep this behavior in mind. It's not a bug, it's simply how things work.
 
 # Question 1: GET /books
 First up, lets create a route that returns a list of all our books. Let's make it a `GET` request because we don't need to *send* a body. If we have no books, then our API should send back an empty array.
 
-- **HTTP Verb:** GET
+- **HTTP Verb:** `GET`
 - **url:** /books
 - **expected response:** An array of `Books` or an empty array
 - **status code**: Always `200`
-
-If you need some clues about `send`ing responses and `status` codes, check out the `delete` route!
 
 ----------------------------------------------------------------
 
 
 # Question 2: POST /books
-Now that we can read our books, we should be able to send over some data and create them. If we `POST`ed data like
+Now that we can read our books, we should be able to send over some data and create them. If we `POST`ed data like:
 
 ```json
 { "title": "The Great Gatsby" }
@@ -136,17 +133,17 @@ Also, since we're creating a resource, we want a status code of `201`. [Look at 
 
 
 # Question 3: GET /books/:id
-Now it's time to get into using `dynamic routing` with [route parameters](https://expressjs.com/en/guide/routing.html#route-parameters). In order to get a *single* specific book, we have to send over the book's id in the url as a `parameter`.
+Now it's time to get into using `dynamic routing` with [route parameters](https://expressjs.com/en/guide/routing.html#route-parameters). In order to get a *single* specific book, we have to send over the book's id in the url as a `parameter`. Be careful! After getting the parameters from the `request` object in Express **they will always by string types**. Be sure to convert ids to numbers before passing them to functions.
 
-So if I made a get request to `/books/2`, I would expect:
+If we send a `GET` request to `/books/2`, I would expect:
 
 ```json
 { "id": 2, "title": "Some book" }
 ```
 
-However, what if someone requests a resource that doesn't exist? In that case we want to send a `404`, and a body that's just the text "Not Found"
+However, what if someone requests a resource that doesn't exist? In that case we want to send a `404`, and a body that's just the text "Not Found."
 
-- **HTTP Verb:** GET
+- **HTTP Verb:** `GET`
 - **url:** /books/:id
 - **expected response:** A single `Book` object OR the text "Not Found"
 - **status code**: Either `200` or `404`
@@ -181,9 +178,6 @@ If however we hit a non-existent id, `/books/123123`, we just get a `404` and a 
 
 Notice that the id is in the route parameter and not the body. With a `PATCH` request, the id isn't usually required (if the API is sticking to conventions).
 
-# 🚨 DEBUG: Fix Book.delete()! 🚨
-Ah, shoot. I just noticed we can't build our `DELETE` route until we fix the underlying `Book.delete` method. Check out the `/tests/debug.spec.js` file to see what's failing. Ideally, we should be able to pass an `id` into `Book.delete()` and *only* that book would be deleted. I'd recommend making a `playground.js` file to mess around with the model.
-
 # Question 5: DELETE /books/:id
 OK! Now that the `Book.delete()` is fixed, let's make the last route.With `DELETE` routes, they just send a status code of `204` and an empty body or a `404` and a "Not Found" body.
 
@@ -193,12 +187,12 @@ OK! Now that the `Book.delete()` is fixed, let's make the last route.With `DELET
 - **status code**: Either `204` or `404`
 
 # Bonus:  Fetch to create
-Hungry for more? If all your tests are passing, here's a challenge for you: create a form in `/public/index.html` to create a new book.
+Hungry for more? If all the tests are passing, here's a challenge for you: create a form in `/public/index.html` to create a new book.
 
 It should have:
 - A label
 - A text input
 - A submit button that sends `{ "title": "whatever" }` via `POST`
-- On a successful submission, clear the form, and re-render the books to see your new book!
+- On a successful submission, clear the form, and re-render the books to see the new book!
 
 Only attempt the bonus if you *fully* understand everything about the server.
