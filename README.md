@@ -198,7 +198,11 @@ If however we hit a non-existent id, `/books/123123`, we just get a `404` and a 
 Notice that the id is in the route parameter and not the body. With a `PATCH` request, the id isn't usually required (if the API is sticking to conventions).
 
 # 🚨 DEBUG: Fix Book.delete()! 🚨
-Ah, shoot. I just noticed we can't build our `DELETE` route until we fix the underlying `Book.delete` method. Check out the `/tests/debug.spec.js` file to see what's failing. Ideally, we should be able to pass an `id` into `Book.delete()` and *only* that book would be deleted. I'd recommend making a `playground.js` file to mess around with the model.
+Ah, shoot. I just noticed we can't build our `DELETE /books/:id` route until we fix the underlying `Book.delete` method. 
+
+Run `npm test` again and check out the `tests/debug.spec.js` portion of the tests to see what's failing. Take a look at the `tests/debug.spec.js` file to understand how the test is set up. 
+
+Finally, look at `model-books.js` and look into the `delete` method. Compare the expected output of the test to the received output to determine what the `delete` method _should_ be doing, but isn't.
 
 # Question 5: DELETE /books/:id
 OK! Now that the `Book.delete()` is fixed, let's make the last route.With `DELETE` routes, they just send a status code of `204` and an empty body or a `404` and a "Not Found" body.
