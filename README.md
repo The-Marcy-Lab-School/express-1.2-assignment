@@ -112,9 +112,6 @@ Also, that funky `#all` means it's a [*private* class property](https://develope
 
 OK! Let's run `npm i` and `npm start` in our terminal, get our Postman ready for queries, and start building! You can also do `npm run test:w` to have Jest continuously test your server on save.
 
-### Wait, where did my books go?
-Since we're using in memory storage, our data isn't permanent. As long as our server is running, we have access to same Books data. However, when the server restarts, all that data will be reset. We'll use DBs next week, but for now keep this behavior in mind. It's not a bug, it's simply how things work.
-
 # Question 1: GET /books
 First up, lets create a route that returns a list of all our books. Let's make it a `GET` request because we don't need to *send* a body. If we have no books, then our API should send back an empty array.
 
@@ -147,6 +144,16 @@ Also, since we're creating a resource, we want a status code of `201`. [Look at 
 - **expect request:** An object with a `title` property
 - **expected response:** A single `Book` object
 - **status code**: Always `201`
+
+### Use Postman to test your code!
+
+Now that you have set up your server to handle `POST` and `GET` requests, you can start using Postman to test it. Start by sending a few `POST` requests to the `/books` endpoint and then send a `GET` request to the same endpoint.
+
+### Wait, where did my books go?
+
+If you have to restart your server, you'll notice that the data that you may have posted previously isn't there anymore.
+
+Since we're using in memory storage, our data isn't permanent. As long as our server is running, we have access to same Books data. However, when the server restarts, all that data will be reset. We'll use DBs next week, but for now keep this behavior in mind. It's not a bug, it's simply how things work.
 
 ----------------------------------------------------------------
 
